@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #bb86fc;
+            margin-bottom: 20px;
+            text-align: center;
+            height: calc(1 / 9 * 100vh / 3);
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .input-group textarea {
+            width: 50%;
+            height: 25%;
+            padding: 10px;
+            margin: 5px 0;
+            border: none;
+            border-radius: 5px;
+            background-color: #1f1f1f;
+            color: #ffffff;
+            font-size: 1em;
+            resize: none;
+        }
+        .input-group button {
+            background-color: #bb86fc;
+            color: #121212;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            margin: 5px 0;
+            width: 50%;
+            height: calc(1 / 12 * 100vh); /* 1/4 of the input box height */
+        }
+        .input-group button:hover {
+            background-color: #3700b3;
+        }
+        #outputMessage {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 1.2em;
+            text-align: center;
+            width: 50%;
+            height: 25%;
+            padding: 10px;
+            background-color: #1f1f1f;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            resize: none;
+            overflow: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>V</h1>
+    <div class="input-group">
+        <textarea id="inputMessage" rows="3" placeholder="Type your message here" onkeydown="handleKeyDown(event)"></textarea>
+        <button onclick="translateMessage()">Translate</button>
+        <textarea id="outputMessage" rows="10" readonly placeholder="Translated message"></textarea>
+    </div>
+
+    <script>
+        function handleKeyDown(event) {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                translateMessage();
+            }
+        }
+
+        function translateMessage() {
+            const inputMessage = document.getElementById('inputMessage').value.toUpperCase();
+            const outputMessage = document.getElementById('outputMessage');
+            const lines = inputMessage.split('\n');
+            let translatedMessage = '';
+            let lastY = 0;
+
+            lines.forEach(line => {
+                let lineTranslation = '';
+                for (let char of line) {
+                    if (char >= 'A' && char <= 'Z') {
+                        const z = char.charCodeAt(0) - 65; // A=0, B=1, ..., Z=25
+                        const adjustedZ = z + lastY;
+                        let x = 0, y = 0;
+                        for (let i = 0; i <= 5; i++) {
+                            y = adjustedZ + (6 * i) - 30;
+                            if (y >= 0 && y <= 9) {
+                                x = i;
+                                break;
+                            }
+                        }
+                        if (y > 9) {
+                            y = y % 10;
+                        }
+                        lastY = y;
+                        lineTranslation += `${x}${y}`;
+                    }
+                }
+                translatedMessage += lineTranslation + '\n';
+                lastY = 0; // Reset lastY for new line
+            });
+
+            outputMessage.value = translatedMessage.trim();
+        }
+    </script>
+</body>
+</html>
